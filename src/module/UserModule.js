@@ -1,28 +1,31 @@
-import { User, UserModel } from '../model/User.js';
+import { UserModel } from '../model/User.js';
 
-export class UserModule {
+export default class UserModule {
     async create(data) {
+        try {
+            const newUser = new UserModel(data);
 
-            try {
-                const newUser = new User(data);
-                return newUser.save(data);
-            } catch (e) {
-                console.log(e);
-            }
-    };
+            return newUser.save();
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     async findByEmail(email) {
+        try {
+            const user = await UserModel.findOne({ email: email }).select('-__v');
 
-            try {
-                const user = await UserModel.findOne({email: email});
-
-                if (!user) {
-                    return null;
-                }
-
-                return user;
-            } catch (e) {
-                console.log(e);
+            if (!user) {
+                return null;
             }
-    };
+
+            return user;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    async findById(id) {
+        return await UserModel.findById(id).select('-__v');
+    }
 }

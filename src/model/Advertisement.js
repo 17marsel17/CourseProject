@@ -1,6 +1,9 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-export const Advertisement = new Schema({
+const { Schema, model } = mongoose;
+const { ObjectId } = Schema;
+
+const Advertisement = new Schema({
     shortText: { type: String, required: true },
     description: String,
     images: [String],

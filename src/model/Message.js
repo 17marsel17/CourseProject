@@ -1,4 +1,7 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+
+const { Schema, model } = mongoose;
+const { ObjectId } = Schema;
 
 export const Message = new Schema({
     author: { type: ObjectId, required: true },

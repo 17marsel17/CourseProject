@@ -4,12 +4,12 @@ services:
     ports: 
       - 27017:27017
     volumes:
-      - ./data/db:/data:db
+      - ./data/db:/data/db
   advertisement:
     build: .
     volumes:
-      ./public/images:/app/public/images
-      ./logs:/app:logs
+      - ./public/images:/app/public/images
+      - ./logs:/app/logs
     ports:
       - 3000:3000
     environment:
