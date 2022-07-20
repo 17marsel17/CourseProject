@@ -28,6 +28,8 @@ export const signin = function (passport) {
           );
         }
 
+        console.log(`isValidPassword`);
+
         if (!isValidPassword(user, password)) {
           console.log('Неверный пароль');
           return done(
@@ -37,6 +39,7 @@ export const signin = function (passport) {
           );
         }
 
+        console.log(`signin ${user}`);
         return done(null, user);
       }
     )

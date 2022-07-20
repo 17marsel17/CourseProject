@@ -4,3 +4,4 @@ node_modules
 .idea
 .eslintrc.json
 data/db
+public/images

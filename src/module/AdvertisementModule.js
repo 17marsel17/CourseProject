@@ -1,46 +1,62 @@
 import { AdvertisementModel } from '../model/Advertisement.js';
 
 export class AdvertisementModule {
-    async find(params) {
+  async find(params) {
+    const searchParams = {
+      isDeleted: false,
+    };
+    if (params) {
+      const { shortText, description, userId, tags } = params;
 
-        return await AdvertisementModel.find({
-                shortText: {$regex: params.shortText}, 
-                description: {$regex: params.description}, 
-                userId: params.userId, 
-                tags: params.tags, 
-                isDeleted: false
-            });
+      if (shortText) {
+        searchParams.shortText = { $regex: shortText, $options: 'i' };
+      }
+      if (description) {
+        searchParams.description = { $regex: description, $options: 'i' };
+      }
+      if (userId) {
+        searchParams.user = userId;
+      }
+      if (tags) {
+        searchParams.tags = tags;
+      }
     }
 
-    async findById(id) {
-        
-        return await AdvertisementModel.findById(id);
+    console.log(searchParams);
+
+    const advertisements = await AdvertisementModel.find(searchParams);
+
+    return advertisements;
+  }
+
+  async findById(id) {
+    return await AdvertisementModel.findById(id);
+  }
+
+  async create(data) {
+    try {
+      const newAdvertisement = new AdvertisementModel(data);
+
+      return await newAdvertisement.save();
+    } catch (e) {
+      console.log(e);
     }
+  }
 
-    async create(data) {
+  async remove(id) {
+    
+    const advertisement = await AdvertisementModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    ).catch((err) => {
+      console.log('err', err);
+    });
 
-            try {
-                const newAdvertisement = new AdvertisementModel(data);
-
-                return newAdvertisement.save(data);
-            } catch (e) {
-                console.log(e);
-            }
-    }
-
-    async remove(id) {
-
-        try {
-            await AdvertisementModel.findByIdAndUpdate(
-                { _id: id },
-                {
-                    $set: {
-                        isDeleted: true
-                    }
-                }
-            );
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    console.log(advertisement);
+    return advertisement;
+  }
 }

@@ -13,7 +13,11 @@ export default class UserModule {
 
     async findByEmail(email) {
         try {
+
+            console.log(email);
             const user = await UserModel.findOne({ email: email }).select('-__v');
+
+            console.log('user', user);
 
             if (!user) {
                 return null;
@@ -26,6 +30,13 @@ export default class UserModule {
     }
 
     async findById(id) {
-        return await UserModel.findById(id).select('-__v');
+        try {
+            const user = await UserModel.findById(id).select('-__v');
+
+            console.log(user);
+            return user;
+        } catch (e) {
+            console.log(e);
+        }
     }
 }

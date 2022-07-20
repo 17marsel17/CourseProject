@@ -38,7 +38,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static('public'));
 
-app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true }));
+app.use(session({ secret: 'SECRET', resave: false, saveUninitialized: false }));
 
 app.use(logger);
 
@@ -49,7 +49,7 @@ app.use(flash());
 
 initAuth(passport);
 
-app.use('/api/advertisements', advertisementRouter);
+app.use('/api/advertisements/', advertisementRouter);
 app.use('/api/', authRouter);
 
 app.use(error);
