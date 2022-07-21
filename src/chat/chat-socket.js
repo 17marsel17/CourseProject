@@ -1,5 +1,7 @@
 import { Chat } from '../module/ChatModule.js';
 
+const chatModule = new Chat();
+
 export const initChat = function (io) {
   io.on('connection', (socket) => {
     const { id } = socket;
@@ -10,20 +12,21 @@ export const initChat = function (io) {
     socket.join(idAuthor);
 
     socket.on('get-history', async (msg) => {
+      const data = JSON.parse(msg);
       let chatHistory;
-      const connectChat = await Chat.find({
-        $or: [
-          { users: [msg.idReceiver, idAuthor] },
-          { users: [idAuthor, msg.idReceiver] },
-        ],
-      });
+      const users = {
+        idAuthor: idAuthor,
+        idReceiver: data.idReceiver
+      }
+
+      const connectChat = await chatModule.find(users);
       if (!connectChat) {
         chatHistory = {
           data: 'Такого чата не существует',
           status: 'error',
         };
       } else {
-        chatHistory = await Chat.getHistory(connectChat._id);
+        chatHistory = await chatModule.getHistory(connectChat._id);
       }
 
       socket.to(idAuthor).emit('chat-history', chatHistory);
@@ -31,14 +34,15 @@ export const initChat = function (io) {
     });
 
     socket.on('send-message', async (msg) => {
-      msg.idAuthor = idAuthor;
+      let data = JSON.parse(msg);
+      data.idAuthor = idAuthor;
 
-      Chat.sendMessage(msg);
+      await chatModule.sendMessage(data);
 
-      msg.type = `id: ${idAuthor}`;
+      data.type = `id: ${idAuthor}`;
 
-      socket.to(idAuthor).emit('new-message', msg);
-      socket.emit('new-message', msg);
+      socket.to(idAuthor).emit('new-message', data);
+      socket.emit('new-message', data);
     });
 
     socket.on('disconnect', () => {
